@@ -1,65 +1,82 @@
 """
-utils.py
---------
-Shared utility functions: logging setup, path helpers, and common
-constants used across the analytics pipeline.
+src/utils.py
+------------
+Module providing shared helper utilities for directory management, logger
+initialization, and path constants across the retail sales analytics pipeline.
+
+Author: Data Analytics Team
 """
 
 import logging
 import os
 import sys
+from typing import Union
+
 
 # ---------------------------------------------------------------------------
-# Project paths (relative to the project root)
+# Project Paths Definition
 # ---------------------------------------------------------------------------
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-RAW_DATA_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "sales_data.csv")
-PROCESSED_DATA_PATH = os.path.join(PROJECT_ROOT, "data", "processed", "sales_data_clean.csv")
-OUTPUTS_DIR = os.path.join(PROJECT_ROOT, "outputs")
-GRAPHS_DIR = os.path.join(PROJECT_ROOT, "graphs")
-REPORTS_DIR = os.path.join(PROJECT_ROOT, "reports")
+PROJECT_ROOT: str = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+RAW_DATA_PATH: str = os.path.join(PROJECT_ROOT, "data", "raw", "sales_data.csv")
+PROCESSED_DATA_PATH: str = os.path.join(PROJECT_ROOT, "data", "processed", "sales_data_clean.csv")
+OUTPUTS_DIR: str = os.path.join(PROJECT_ROOT, "outputs")
+GRAPHS_DIR: str = os.path.join(PROJECT_ROOT, "graphs")
+REPORTS_DIR: str = os.path.join(PROJECT_ROOT, "reports")
+MODELS_DIR: str = os.path.join(PROJECT_ROOT, "models")
 
 
 def get_logger(name: str) -> logging.Logger:
     """
-    Create and configure a logger that writes to both console and a
-    shared log file (logs/pipeline.log).
+    Configure and return a dual-handler logger writing to stdout and pipeline.log.
+
+    Avoids creating duplicate handlers if the logger has already been initialized.
 
     Parameters
     ----------
     name : str
-        Name of the logger, typically __name__ of the calling module.
+        Name of the logger (typically __name__ of the calling module).
 
     Returns
     -------
     logging.Logger
+        Configured logger instance.
     """
     log_dir = os.path.join(PROJECT_ROOT, "logs")
     os.makedirs(log_dir, exist_ok=True)
 
     logger = logging.getLogger(name)
     if logger.handlers:
-        # Avoid adding duplicate handlers if the logger already exists
         return logger
 
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(
-        "%(asctime)s | %(name)s | %(levelname)s | %(message)s",
+        fmt="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    # Console stream handler
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 
-    file_handler = logging.FileHandler(os.path.join(log_dir, "pipeline.log"))
+    # File handler
+    log_file_path = os.path.join(log_dir, "pipeline.log")
+    file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
     return logger
 
 
-def ensure_dirs(*paths):
-    """Create directories if they do not already exist."""
+def ensure_dirs(*paths: Union[str, bytes, os.PathLike]) -> None:
+    """
+    Create one or more directories if they do not already exist.
+
+    Parameters
+    ----------
+    *paths : Union[str, bytes, os.PathLike]
+        One or many path-like objects to create.
+    """
     for path in paths:
-        os.makedirs(path, exist_ok=True)
+        if path:
+            os.makedirs(path, exist_ok=True)
