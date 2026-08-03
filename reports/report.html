@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Retail Sales Analytics Report</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #1f2937; line-height: 1.6; }
+h1, h2, h3 { color: #111827; }
+h1 { border-bottom: 3px solid #2563eb; padding-bottom: 10px; }
+h2 { border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-top: 40px; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; }
+th { background-color: #f3f4f6; }
+code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Retail Sales Analytics Report</h1>
+</header>
+<h1 id="retail-sales-analytics-report">Retail Sales Analytics
+Report</h1>
+<p><strong>Project:</strong> Retail Sales Data Analytics &amp;
+Prediction <strong>Prepared by:</strong> Data Analytics Team
+<strong>Date:</strong> August 2026</p>
+<hr />
+<h2 id="project-overview">1. Project Overview</h2>
+<p>This project delivers an end-to-end data analytics pipeline for a
+simulated multi-category retail business. It covers data cleaning,
+exploratory data analysis, statistical analysis, correlation analysis,
+predictive modeling, and an interactive dashboard, packaged as a
+GitHub-ready repository.</p>
+<h2 id="dataset-description">2. Dataset Description</h2>
+<p>The dataset (<code>data/raw/sales_data.csv</code>) contains
+<strong>2,015 order-level records</strong> spanning <strong>January 2022
+– December 2024</strong>, across <strong>6 product categories</strong>
+(Electronics, Clothing, Home &amp; Kitchen, Sports, Beauty, Toys) and
+<strong>5 regions</strong> (North, South, East, West, Central).</p>
+<table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OrderID</td>
+<td>Unique order identifier</td>
+</tr>
+<tr class="even">
+<td>Date</td>
+<td>Order date</td>
+</tr>
+<tr class="odd">
+<td>Category / Product</td>
+<td>Product taxonomy</td>
+</tr>
+<tr class="even">
+<td>Region</td>
+<td>Sales region</td>
+</tr>
+<tr class="odd">
+<td>UnitPrice, Quantity, DiscountPct</td>
+<td>Transaction attributes</td>
+</tr>
+<tr class="even">
+<td>Sales, Cost, Profit</td>
+<td>Financial outcomes</td>
+</tr>
+<tr class="odd">
+<td>CustomerAge, SatisfactionScore</td>
+<td>Customer attributes</td>
+</tr>
+</tbody>
+</table>
+<p>The raw data intentionally contains missing values, duplicate rows,
+and outliers to demonstrate a realistic cleaning workflow.</p>
+<h2 id="objectives">3. Objectives</h2>
+<ol type="1">
+<li>Clean and prepare the raw dataset for analysis.</li>
+<li>Understand sales, profit, and customer patterns across categories,
+regions, and time.</li>
+<li>Quantify relationships between key numeric variables.</li>
+<li>Build predictive models for order value and high-value order
+classification.</li>
+<li>Present findings through visualizations, a written report, and an
+interactive dashboard.</li>
+</ol>
+<h2 id="methodology">4. Methodology</h2>
+<p>The pipeline (<code>run_pipeline.py</code>) executes six stages:</p>
+<ol type="1">
+<li><strong>Preprocessing</strong> (<code>src/preprocessing.py</code>) —
+load, deduplicate, impute missing values, cap outliers (IQR method), and
+engineer features (Year, Month, Quarter, ProfitMargin, AvgOrderValue,
+HighValueOrder).</li>
+<li><strong>Exploratory Analysis</strong> (<code>src/analysis.py</code>)
+— descriptive statistics, category/regional aggregation, monthly
+trend.</li>
+<li><strong>Visualization</strong> (<code>src/visualization.py</code>) —
+12 chart types saved to <code>graphs/</code>.</li>
+<li><strong>Modeling</strong> (<code>src/model.py</code>) — a Random
+Forest regressor (predicts <code>Sales</code>) and a Random Forest
+classifier (predicts <code>HighValueOrder</code>).</li>
+<li><strong>Prediction Export</strong> — test-set predictions saved to
+<code>outputs/prediction_results.csv</code>.</li>
+<li><strong>Dashboard</strong> (<code>dashboard/app.py</code>) — a
+Streamlit app for interactive exploration of the cleaned data and model
+outputs.</li>
+</ol>
+<h2 id="data-cleaning">5. Data Cleaning</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Duplicate rows removed</td>
+<td>15 exact duplicates dropped</td>
+</tr>
+<tr class="even">
+<td>Missing values imputed</td>
+<td>Numeric columns via median, categorical via mode</td>
+</tr>
+<tr class="odd">
+<td>Outliers capped (IQR method)</td>
+<td>915 extreme values capped across Sales, Quantity, Profit,
+UnitPrice</td>
+</tr>
+<tr class="even">
+<td>Features engineered</td>
+<td>Year, Month, Quarter, DayOfWeek, ProfitMargin, AvgOrderValue,
+HighValueOrder</td>
+</tr>
+</tbody>
+</table>
+<p>The cleaned dataset (2,000 rows after deduplication) is saved to
+<code>data/processed/sales_data_clean.csv</code> and mirrored in
+<code>outputs/cleaned_dataset.csv</code>.</p>
+<h2 id="exploratory-data-analysis">6. Exploratory Data Analysis</h2>
+<ul>
+<li><strong>Total Sales:</strong> $677,423</li>
+<li><strong>Total Profit:</strong> $218,695</li>
+<li><strong>Average Order Value:</strong> $338.71</li>
+<li><strong>Average Profit Margin:</strong> 32.4%</li>
+</ul>
+<p><strong>Sales by category:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Total Sales</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Electronics</td>
+<td>$283,316</td>
+</tr>
+<tr class="even">
+<td>Home &amp; Kitchen</td>
+<td>$121,492</td>
+</tr>
+<tr class="odd">
+<td>Sports</td>
+<td>$92,190</td>
+</tr>
+<tr class="even">
+<td>Clothing</td>
+<td>$69,312</td>
+</tr>
+<tr class="odd">
+<td>Toys</td>
+<td>$61,749</td>
+</tr>
+<tr class="even">
+<td>Beauty</td>
+<td>$49,364</td>
+</tr>
+</tbody>
+</table>
+<p>Electronics contributes over 40% of total revenue despite
+representing only one of six categories, driven by a higher average unit
+price.</p>
+<p><strong>Sales by region</strong> are relatively balanced, ranging
+from $124K (North) to $153K (West), suggesting no single region is
+significantly underperforming.</p>
+<h2 id="visualizations">7. Visualizations</h2>
+<p>All charts below are saved as high-resolution PNGs in
+<code>graphs/</code>:</p>
+<ul>
+<li><code>bar_chart.png</code> — Total sales by category</li>
+<li><code>line_chart.png</code> — Monthly sales &amp; profit trend</li>
+<li><code>pie_chart.png</code> — Regional sales share</li>
+<li><code>histogram.png</code> — Distribution of order sales values</li>
+<li><code>scatter_plot.png</code> — Unit price vs. sales by
+category</li>
+<li><code>correlation_heatmap.png</code> — Correlation matrix of numeric
+features</li>
+<li><code>boxplot.png</code> — Sales distribution by category</li>
+<li><code>distribution_plot.png</code> — Profit margin density</li>
+<li><code>feature_importance.png</code> — Random Forest regression
+feature importance</li>
+<li><code>prediction_chart.png</code> — Predicted vs. actual sales</li>
+<li><code>confusion_matrix.png</code> — High-value order classifier
+confusion matrix</li>
+<li><code>roc_curve.png</code> — High-value order classifier ROC
+curve</li>
+<li><code>residual_plot.png</code> — Regression residuals</li>
+</ul>
+<h2 id="statistical-findings">8. Statistical Findings</h2>
+<ul>
+<li>Sales values are right-skewed (skew ≈ 1.09), consistent with a long
+tail of large orders.</li>
+<li><code>UnitPrice</code> and <code>Sales</code> show a positive
+correlation, as expected; <code>Quantity</code> also contributes
+meaningfully to total order value.</li>
+<li><code>SatisfactionScore</code> shows negligible correlation with
+<code>Sales</code> or <code>Profit</code>, suggesting satisfaction is
+not strongly value-driven in this simulated dataset — a signal worth
+validating against real customer data.</li>
+<li>Profit margin is fairly stable across categories, averaging around
+32%, with a moderately tight spread (std ≈ 7 points).</li>
+</ul>
+<h2 id="machine-learning">9. Machine Learning</h2>
+<h3 id="regression-predicting-order-sales">9.1 Regression — Predicting
+Order Sales</h3>
+<p>A <code>RandomForestRegressor</code> (200 trees, max depth 8) was
+trained on transaction and customer attributes to predict order-level
+<code>Sales</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MAE</td>
+<td>18.73</td>
+</tr>
+<tr class="even">
+<td>RMSE</td>
+<td>44.09</td>
+</tr>
+<tr class="odd">
+<td>R²</td>
+<td>0.971</td>
+</tr>
+</tbody>
+</table>
+<h3 id="classification-high-value-order-detection">9.2 Classification —
+High-Value Order Detection</h3>
+<p>A <code>RandomForestClassifier</code> was trained to flag orders
+above the median sales value (<code>HighValueOrder</code>).</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accuracy</td>
+<td>0.980</td>
+</tr>
+<tr class="even">
+<td>Precision</td>
+<td>0.980</td>
+</tr>
+<tr class="odd">
+<td>Recall</td>
+<td>0.980</td>
+</tr>
+<tr class="even">
+<td>F1 Score</td>
+<td>0.980</td>
+</tr>
+<tr class="odd">
+<td>ROC AUC</td>
+<td>0.998</td>
+</tr>
+</tbody>
+</table>
+<h2 id="model-evaluation">10. Model Evaluation</h2>
+<p>Both models perform strongly, which is expected given
+<code>Sales</code> is partly deterministic from <code>UnitPrice</code>,
+<code>Quantity</code>, and <code>DiscountPct</code> in this simulated
+dataset. The residual plot (<code>residual_plot.png</code>) shows
+residuals centered near zero with no strong pattern, indicating the
+regression model is not systematically biased. The ROC curve
+(<code>roc_curve.png</code>) confirms strong class separability for the
+high-value classifier.</p>
+<p><strong>Caveat:</strong> On real-world data, expect noisier
+relationships and lower performance; these results should be treated as
+a template methodology rather than literal benchmarks.</p>
+<h2 id="business-insights">11. Business Insights</h2>
+<ol type="1">
+<li><strong>Electronics is the primary revenue driver</strong> and
+merits continued inventory and marketing investment.</li>
+<li><strong>Regional performance is balanced</strong>, so growth efforts
+may be better spent on cross-region initiatives (e.g., loyalty programs)
+rather than fixing an underperforming region.</li>
+<li><strong>Discounting is used sparingly</strong> (mean ≈ 3.3%), and
+could be tested more aggressively in lower-performing categories
+(Beauty, Toys) to assess price elasticity.</li>
+<li><strong>Profit margin is consistent across categories</strong>,
+indicating pricing and cost structures are currently well-balanced.</li>
+</ol>
+<h2 id="recommendations">12. Recommendations</h2>
+<ul>
+<li>Expand Electronics assortment and consider premium SKUs given strong
+average order value.</li>
+<li>Run targeted A/B discount tests in Beauty and Toys to grow their
+smaller revenue share.</li>
+<li>Use the <code>HighValueOrder</code> classifier to prioritize
+high-value customers for retention campaigns.</li>
+<li>Monitor <code>SatisfactionScore</code> alongside NPS or churn data
+in production, since it showed limited correlation with sales here.</li>
+</ul>
+<h2 id="future-improvements">13. Future Improvements</h2>
+<ul>
+<li>Incorporate real transactional data and seasonality/holiday
+effects.</li>
+<li>Add time-series specific models (e.g., Prophet, ARIMA) for
+forecasting future sales rather than point-in-time prediction.</li>
+<li>Add customer-level (not just order-level) features such as lifetime
+value and repeat-purchase rate.</li>
+<li>Deploy the dashboard with authentication and a scheduled data
+refresh job for production use.</li>
+</ul>
+<h2 id="conclusion">14. Conclusion</h2>
+<p>This project demonstrates a complete, reproducible retail analytics
+workflow — from raw, messy data to cleaned datasets, rich
+visualizations, validated predictive models, and an interactive
+dashboard. The modular <code>src/</code> package and
+<code>run_pipeline.py</code> entry point make it straightforward to swap
+in a real dataset and reproduce the full analysis.</p>
+</body>
+</html>
