@@ -1,0 +1,14 @@
+{
+    "regression": {
+        "MAE": 0.0,
+        "RMSE": 0.0,
+        "R2": 1.0
+    },
+    "classification": {
+        "Accuracy": 0.5,
+        "Precision": 0.5,
+        "Recall": 0.667,
+        "F1": 0.571,
+        "ROC_AUC": 0.5
+    }
+}
